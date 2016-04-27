@@ -60,7 +60,7 @@ process_file()
     bid2=$(echo ${bid} | cut -n -c 3-)
     
    # mkdir -p usr/lib/debug/.build-id/${bid1}
-   # ln -s ${file}.debuginfo usr/lib/debug/.build-id/${bid1}/{bid2}.debug
+   # ln -s ${file}.debuginfo usr/lib/debug/.build-id/${bid1}/${bid2}.debug
 }   
 
 cd release
