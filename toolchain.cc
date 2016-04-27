@@ -1,3 +1,5 @@
+// How  to  separate  debuginfo  from  process
+// consult: http://blog.csdn.net/chinainvent/article/details/24129311?reload
 #!/bin/bash
 
 process_file()
