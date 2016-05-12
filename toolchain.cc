@@ -70,3 +70,77 @@ for file in $(find . -type f); do
     process_file $file
 done
 
+// how to build rpm
+// MakeFile
+RPMTOPDIR=$(abspath rpmbuild)
+ROOTFS=$(abspath rootfs)
+COMPILE_DIR=$(abspath build)
+PAIRS_VERSION=0.0.1
+PAIRS_RELEASE=$(shell date +%y%j%H%M)
+all:build_rpm
+
+build_rpm:.build_rpm_pairs
+	
+.build_rpm_pairs: .install
+	rm -rf ${RPMTOPDIR}
+	rpmbuild -bb \
+		-D "_topdir $(RPMTOPDIR)" \
+		-D "_prefix /opt/uniview/ia10k" \
+		-D "rootfs ${ROOTFS}" \
+		-D "pairs_version  $(PAIRS_VERSION)" \
+		-D "pairs_release  $(PAIRS_RELEASE)" \
+		pairs.spec
+.install: $(COMPILE_DIR)/bin/ias 
+	rm -rf $(ROOTFS)
+	mkdir -p $(ROOTFS)/opt/pairs/{bin,lib,etc,db}
+	install -m 755 build/bin/ias  $(ROOTFS)/opt/pairs/bin
+	install -m 755 build/lib/*.so $(ROOTFS)/opt/pairs/lib
+	install -m 755 build/etc/ias.conf $(ROOTFS)/opt/pairs/etc
+	install -m 755 build/db/pairs.db $(ROOTFS)/opt/pairs/db	
+
+clean:
+	rm -rf $(ROOTFS) $(RPMTOPDIR)
+.PHONY: clean
+
+
+
+// spec
+Summary: PAIR Software
+Name: pairs
+Version: %{?pairs_version}
+Release: %{?pairs_release}%{?dist}
+License: PAIRS Licence
+Group: Red Hat
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+%description
+pairs software
+
+%define pairs_prefix /opt/pairs
+%install
+rm -rf %{buildroot}
+cp -rf %{rootfs} %{buildroot}
+%clean
+rm -rf %{buildroot}
+
+%prep
+echo "begin install pairs"
+%post
+echo "install pairs end"
+%preun
+%postun
+
+%files
+%defattr(-,root,root)
+%attr(0755,root,root) %{pairs_prefix}/bin/ias
+%attr(0755,root,root) %{pairs_prefix}/lib/*
+%attr(0755,root,root) %{pairs_prefix}/etc/ias.conf
+%attr(0755,root,root) %{pairs_prefix}/db/pairs.db
+
+
+
+
+
+
+
+
+
