@@ -81,15 +81,12 @@ process_file()
     mv ${filename}.debuginfo debug/
 }
 
-
-# TODO update release
-rm -rf ${route}/../release && cp -rf ${route}/../back ${route}/../release
-
-# 1.release where generated files
+# 1. cd release dir
 cd ${route}/../release
+
 ## avoid mistakes do not produce a debuginfo
-mkdir -p usr/lib 
-mkdir -p debug
+#mkdir -p usr/lib 
+#mkdir -p debug
 
 # 2. process each file
 for file in $(find . -type f); do

@@ -23,12 +23,24 @@ if [ -d "$route/../deb" ]; then
     rm -rf $route/../deb
 fi
 
+if [ -d "$route/../release" ]; then
+    rm -rf $route/../release
+fi
+
 mkdir -p $route/../build || exit 1
 mkdir -p $route/../deb || exit 2
 
-cd $route/../build
+# clean up release
+rm -rf ${route}/../release
+mkdir -p ${route}/../release/lib
+mkdir -p ${route}/../release/bin
+
+cd ${route}/../build
 cmake .. -G "Unix Makefiles"
 make -j 4 || exit 3
+
+cp -rf ${route}/../etc ${route}/../doc  ${route}/../include ${route}/../release
+
 
 # 2. strip release
 sh ${route}/strip.sh || exit 4
