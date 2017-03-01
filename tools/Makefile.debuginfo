@@ -1,0 +1,2 @@
+install:
+	cp -rf debug /opt/jrpc
